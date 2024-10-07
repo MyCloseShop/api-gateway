@@ -10,7 +10,7 @@ spring:
     gateway:
       routes:
         - id: login-service
-          uri: http://localhost:8080/api/ms-login/
+          uri: ${MS_LOGIN_HOST:http://localhost}:${MS_LOGIN_PORT:8081}${MS_LOGIN_PATH:/api/ms-login/}
           predicates:
             - Path=/api/ms-login/**
           filters:
