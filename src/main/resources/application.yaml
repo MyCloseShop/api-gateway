@@ -10,14 +10,24 @@ spring:
     gateway:
       routes:
         - id: login-service
-          uri: ${MS_LOGIN_HOST:http://localhost}:${MS_LOGIN_PORT:8081}${MS_LOGIN_PATH:/api/ms-login/}
+          uri: ${MS_LOGIN_HOST:http://localhost}:${MS_LOGIN_PORT:8081}${MS_LOGIN_PATH:/api/ms-login-api/}
           predicates:
-            - Path=/api/ms-login/**
+            - Path=/api/ms-login-api/**
           filters:
             - name: CircuitBreaker
               args:
                 name: login-service
                 fallbackUri: forward:/fallback/login
+
+        - id: shop-service
+          uri: ${MS_SHOP_HOST:http://localhost}:${MS_SHOP_PORT:8082}${MS_SHOP_PATH:/api/ms-shop-api/}
+          predicates:
+              - Path=/api/ms-shop-api/**
+          filters:
+              - name: CircuitBreaker
+                args:
+                    name: shop-service
+                    fallbackUri: forward:/fallback/shop
 
       default-filters:
         - name: RemoveRequestHeader
