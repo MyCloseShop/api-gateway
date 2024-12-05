@@ -14,13 +14,8 @@ FROM eclipse-temurin:21-jdk-jammy AS deps
 WORKDIR /build
 
 # Copy the mvnw wrapper with executable permissions.
-RUN echo "Début de la copie du fichier mvnw"
-COPY --chmod=0755 ./mvnw /build/mvnw
-RUN echo "Fin de la copie du fichier mvnw"
-RUN ls -l /build/mvnw
-
+COPY --chmod=0755 mvnw mvnw
 COPY .mvn/ .mvn/
-RUN ls -l /build/.mvn
 
 # Download dependencies as a separate step to take advantage of Docker's caching.
 # Leverage a cache mount to /root/.m2 so that subsequent builds don't have to
@@ -94,4 +89,12 @@ COPY --from=extract build/target/extracted/application/ ./
 
 EXPOSE 8080
 
-ENTRYPOINT [ "java", "org.springframework.boot.loader.launch.JarLauncher" ]
+COPY ./script/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+
+FROM amazoncorretto:21-alpine-jdk AS executable
+WORKDIR /app
+COPY ./target/app.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]

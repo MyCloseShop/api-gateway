@@ -8,9 +8,22 @@
 # database or a cache. For examples, see the Awesome Compose repository:
 # https://github.com/docker/awesome-compose
 services:
-  ms-login:
-    container_name: 'ms-login'
-    image: 'redsnoww/ms-login-api:0.3.0'
+  api-gateway:
+    container_name: 'api-gateway'
+    image: 'redsnoww/api-gateway:0.1.0'
+    ports:
+      - "8080:8080"
+    environment:
+      - 'MS_LOGIN_HOST=http://server-ms-login'
+      - 'MS_LOGIN_PORT=8080'
+      - 'MS_LOGIN_PATH=/api/ms-login-api/'
+      - 'MS_SHOP_HOST=http://server-ms-shop'
+      - 'MS_SHOP_PORT=8080'
+      - 'MS_SHOP_PATH=/api/ms-shop-api/'
+
+  server-ms-login:
+    container_name: 'server-ms-login'
+    image: 'redsnoww/ms-login-api:0.6.0'
     ports:
       - "8081:8080"
     environment:
@@ -20,6 +33,8 @@ services:
       - 'SPRING_DATASOURCE_PASSWORD=secret'
       - 'SPRING_RABBITMQ_HOST=rabbitmq'
       - 'SPRING_RABBITMQ_PORT=5672'
+      - 'EUREKA_HOST=http://server-ms-eureka:8761/eureka/'
+
     depends_on:
       db-ms-login:
         condition: service_healthy
@@ -34,6 +49,7 @@ services:
       - 'MYSQL_USER=user'
     ports:
       - '3307:3306'
+
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 10s
@@ -45,9 +61,10 @@ services:
 
   server-ms-shop:
     container_name: 'server-ms-shop'
-    image: 'redsnoww/ms-shop-api:0.1.0'
+    image: 'redsnoww/ms-shop-api:0.7.0'
     ports:
       - "8082:8080"
+
     depends_on:
       db-ms-shop:
         condition: service_healthy
@@ -58,6 +75,7 @@ services:
       - 'SPRING_DATASOURCE_PASSWORD=secret'
       - 'SPRING_RABBITMQ_HOST=rabbitmq'
       - 'SPRING_RABBITMQ_PORT=5672'
+      - 'EUREKA_HOST=http://server-ms-eureka:8761/eureka/'
 
   ### juste lancé ça si au dessus ça build pas
   db-ms-shop:
@@ -68,6 +86,7 @@ services:
       - 'MYSQL_PASSWORD=secret'
       - 'MYSQL_ROOT_PASSWORD=secret'
       - 'MYSQL_USER=user'
+
     ports:
       - '3308:3306'
     healthcheck:
@@ -76,46 +95,37 @@ services:
       timeout: 5s
       retries: 5
 
+  server-ms-mail:
+    container_name: 'server-ms-mail'
+    image: 'redsnoww/ms-mail-api:0.1.0'
+    environment:
+      - 'SPRING_RABBITMQ_PORT=5672'
+      - 'SPRING_RABBITMQ_HOST=rabbitmq'
+      - 'SPRING_RABBITMQ_USERNAME=guest'
+      - 'SPRING_RABBITMQ_PASSWORD=guest'
+      - 'SPRING_MAIL_HOST=smtp.gmail.com'
+      - 'SPRING_MAIL_PORT=587'
+      - 'SPRING_MAIL_USERNAME=mycloseshopapp@gmail.com'
+      - 'SPRING_MAIL_PASSWORD=kdje ybxm ovdq tvut'
+      - 'SPRING_MAIL_PROTOCOL=smtp'
+
+  server-ms-eureka:
+    container_name: 'server-ms-eureka'
+    image: 'redsnoww/ms-eureka-api:0.1.0'
+    ports:
+      - "8761:8761"
+    environment:
+      - 'SPRING_EUREKA_APP_PORT=8761'
 
     ##############################################
 
-  #rabbitmq:
-  #  image: 'rabbitmq:latest'
-  #  environment:
-  #    - 'RABBITMQ_DEFAULT_PASS=secret'
-  #    - 'RABBITMQ_DEFAULT_USER=myuser'
-  #  ports:
-  #    - '5672'
-# The commented out section below is an example of how to define a PostgreSQL
-# database that your application can use. `depends_on` tells Docker Compose to
-# start the database before your application. The `db-data` volume persists the
-# database data between container restarts. The `db-password` secret is used
-# to set the database password. You must create `db/password.txt` and add
-# a password of your choosing to it before running `docker-compose up`.
-#     depends_on:
-#       db:
-#         condition: service_healthy
-#   db:
-#     image: postgres
-#     restart: always
-#     user: postgres
-#     secrets:
-#       - db-password
-#     volumes:
-#       - db-data:/var/lib/postgresql/data
-#     environment:
-#       - POSTGRES_DB=example
-#       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
-#     expose:
-#       - 5432
-#     healthcheck:
-#       test: [ "CMD", "pg_isready" ]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-# volumes:
-#   db-data:
-# secrets:
-#   db-password:
-#     file: db/password.txt
+  rabbitmq:
+    container_name: 'rabbitmq'
+    image: 'rabbitmq:management'
 
+    environment:
+      - 'RABBITMQ_DEFAULT_PASS=guest'
+      - 'RABBITMQ_DEFAULT_USER=guest'
+    ports:
+      - '15672:15672'
+      - '5672:5672'
