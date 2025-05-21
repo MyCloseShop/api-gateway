@@ -61,7 +61,7 @@ services:
 
   server-ms-shop:
     container_name: 'server-ms-shop'
-    image: 'redsnoww/ms-shop-api:0.7.0'
+    image: 'redsnoww/ms-shop-api:0.9.0'
     ports:
       - "8082:8080"
 
