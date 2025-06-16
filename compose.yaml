@@ -117,7 +117,44 @@ services:
     environment:
       - 'SPRING_EUREKA_APP_PORT=8761'
 
-    ##############################################
+  server-ms-quote:
+    container_name: 'server-ms-quote'
+    image: 'redsnoww/ms-quote-api:0.1.0'
+    ports:
+      - "8083:8080"
+    depends_on:
+      db-ms-quote:
+        condition: service_healthy
+
+    environment:
+      - 'SPRING_APP_PORT=8080'
+      - 'SPRING_DATASOURCE_URL=jdbc:mysql://db-ms-shop:3306/db-ms-quote'
+      - 'SPRING_DATASOURCE_USERNAME=user'
+      - 'SPRING_DATASOURCE_PASSWORD=secret'
+      - 'SPRING_RABBITMQ_HOST=rabbitmq'
+      - 'SPRING_RABBITMQ_PORT=5672'
+      - 'EUREKA_HOST=http://server-ms-eureka:8761/eureka/'
+
+
+  db-ms-quote:
+    container_name: 'db-ms-quote'
+    image: 'mysql:latest'
+
+    environment:
+      - 'MYSQL_DATABASE=db-ms-quote'
+      - 'MYSQL_PASSWORD=secret'
+      - 'MYSQL_ROOT_PASSWORD=secret'
+      - 'MYSQL_USER=user'
+
+    ports:
+      - '3310:3306'
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+      ##############################################
 
   rabbitmq:
     container_name: 'rabbitmq'
