@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.etna.gpe.mycloseshop</groupId>
 	<artifactId>api-gateway</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>api-gateway</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
@@ -42,12 +42,6 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-gateway</artifactId>
-		</dependency>
-
-		<!-- EUREKA CLIENT -->
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
 
 		<dependency>
