@@ -16,4 +16,14 @@ public class FallbackController {
     public ResponseEntity<String> shopFallback() {
         return new ResponseEntity<>("Le service de shop est indisponible pour le moment. Veuillez réessayer plus tard.", HttpStatus.SERVICE_UNAVAILABLE);
     }
+
+    @GetMapping("/fallback/quote")
+    public ResponseEntity<String> quoteFallback() {
+        return new ResponseEntity<>("Le service de quote est indisponible pour le moment. Veuillez réessayer plus tard.", HttpStatus.SERVICE_UNAVAILABLE);
+    }
+
+    @GetMapping("/fallback/social")
+    public ResponseEntity<String> socialFallback() {
+        return new ResponseEntity<>("Le service de social est indisponible pour le moment. Veuillez réessayer plus tard.", HttpStatus.SERVICE_UNAVAILABLE);
+    }
 }
