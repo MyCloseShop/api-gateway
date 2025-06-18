@@ -20,6 +20,8 @@ services:
       - 'MS_SHOP_HOST=http://server-ms-shop'
       - 'MS_SHOP_PORT=8080'
       - 'MS_SHOP_PATH=/api/ms-shop-api/'
+      - 'MS_QUOTE_PORT=8080'
+      - 'MS_QUOTE_PATH=/api/ms-quote-api/'
 
   server-ms-login:
     container_name: 'server-ms-login'
