@@ -10,9 +10,9 @@
 services:
   api-gateway:
     container_name: 'api-gateway'
-    image: 'redsnoww/api-gateway:0.2.0'
+    image: 'redsnoww/api-gateway:0.3.0'
     ports:
-      - "8080:8080"
+      - "8091:8080"
     environment:
       - 'MS_LOGIN_HOST=http://server-ms-login'
       - 'MS_LOGIN_PORT=8080'
@@ -26,7 +26,7 @@ services:
 
   server-ms-login:
     container_name: 'server-ms-login'
-    image: 'redsnoww/ms-login-api:0.6.0'
+    image: 'redsnoww/ms-login-api:1.0.3'
     ports:
       - "8081:8080"
     environment:
@@ -64,7 +64,7 @@ services:
 
   server-ms-shop:
     container_name: 'server-ms-shop'
-    image: 'redsnoww/ms-shop-api:0.10.0'
+    image: 'redsnoww/ms-shop-api:0.11.0'
     ports:
       - "8082:8080"
 
@@ -100,7 +100,7 @@ services:
 
   server-ms-mail:
     container_name: 'server-ms-mail'
-    image: 'redsnoww/ms-mail-api:0.2.0'
+    image: 'redsnoww/ms-mail-api:0.3.0'
     environment:
       - 'SPRING_RABBITMQ_PORT=5672'
       - 'SPRING_RABBITMQ_HOST=rabbitmq'
