@@ -154,7 +154,7 @@ services:
     container_name: 'server-ms-social'
     image: 'redsnoww/ms-social-api:0.1.0'
     ports:
-      - "8083:8080"
+      - "8084:8080"
     depends_on:
       db-ms-social:
         condition: service_healthy
@@ -179,7 +179,7 @@ services:
       - 'MYSQL_USER=user'
 
     ports:
-      - '3310:3306'
+      - '3311:3306'
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       interval: 10s
