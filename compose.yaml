@@ -152,7 +152,7 @@ services:
 
   server-ms-social:
     container_name: 'server-ms-social'
-    image: 'redsnoww/ms-social-api:0.1.0'
+    image: 'redsnoww/ms-social-api:0.2.0'
     ports:
       - "8084:8080"
     depends_on:
