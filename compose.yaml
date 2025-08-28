@@ -26,6 +26,9 @@ services:
       - 'MS_SOCIAL_HOST=http://server-ms-social'
       - 'MS_SOCIAL_PORT=8080'
       - 'MS_SOCIAL_PATH=/api/ms-social-api/'
+      - 'MS_PAYMENT_HOST=http://server-ms-payment'
+      - 'MS_PAYMENT_PORT=8080'
+      - 'MS_PAYMENT_PATH=/api/ms-payment-api/'
 
   server-ms-login:
     container_name: 'server-ms-login'
@@ -67,7 +70,7 @@ services:
 
   server-ms-shop:
     container_name: 'server-ms-shop'
-    image: 'redsnoww/ms-shop-api:0.11.4'
+    image: 'redsnoww/ms-shop-api:0.12.0'
     ports:
       - "8082:8080"
 
@@ -103,7 +106,7 @@ services:
 
   server-ms-mail:
     container_name: 'server-ms-mail'
-    image: 'redsnoww/ms-mail-api:0.4.0'
+    image: 'redsnoww/ms-mail-api:0.5.0'
     environment:
       - 'SPRING_RABBITMQ_PORT=5672'
       - 'SPRING_RABBITMQ_HOST=rabbitmq'
@@ -188,6 +191,51 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  server-ms-payment:
+    container_name: server-ms-payment
+    depends_on:
+      db-ms-payment:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+    environment:
+      - 'SPRING_APP_URL=8080'
+      - 'SPRING_DATASOURCE_URL=jdbc:mysql://db-ms-payment:3306/db-ms-payment'
+      - 'SPRING_DATASOURCE_USERNAME=user'
+      - 'SPRING_DATASOURCE_PASSWORD=secret'
+      - 'SPRING_RABBITMQ_HOST=rabbitmq'
+      - 'SPRING_RABBITMQ_PORT=5672'
+      - 'APP_BASE_URL=http://localhost:8089/api/ms-payment-api'
+      - 'MS_SHOP_API_URL=http://server-ms-shop:8080/api/ms-shop-api'
+      - 'STRIPE_SECRET_KEY=sk_test_'
+    image: redsnoww/ms-payment-api:0.2.2
+    ports:
+      - "8089:8080"
+
+  db-ms-payment:
+    container_name: db-ms-payment
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+    environment:
+      - 'MYSQL_DATABASE=db-ms-payment'
+      - 'MYSQL_PASSWORD=secret'
+      - 'MYSQL_ROOT_PASSWORD=secret'
+      - 'MYSQL_USER=user'
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    image: mysql:latest
+    ports:
+      - "3312:3306"
 
       ##############################################
 
