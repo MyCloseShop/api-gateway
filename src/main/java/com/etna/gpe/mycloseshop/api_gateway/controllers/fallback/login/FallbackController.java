@@ -26,4 +26,9 @@ public class FallbackController {
     public ResponseEntity<String> socialFallback() {
         return new ResponseEntity<>("Le service de social est indisponible pour le moment. Veuillez réessayer plus tard.", HttpStatus.SERVICE_UNAVAILABLE);
     }
+
+    @GetMapping("fallback/payment")
+    public ResponseEntity<String> paymentFallback() {
+        return new ResponseEntity<>("Le service de payment est indisponible pour le moment. Veuillez réessayer plus tard.", HttpStatus.SERVICE_UNAVAILABLE);
+    }
 }

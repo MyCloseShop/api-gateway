@@ -43,6 +43,17 @@ spring:
                 name: quote-service
                 fallbackUri: forward:/fallback/quote
 
+        - id: payment-service
+          uri: ${MS_PAYMENT_HOST:http://localhost}:${MS_PAYMENT_PORT:8082}${MS_PAYMENT_PATH:/api/ms-payment-api/}
+          #uri: lb://MS-PAYMENT-API/api/ms-payment-api
+          predicates:
+            - Path=/api/ms-payment-api/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: payment-service
+                fallbackUri: forward:/fallback/payment
+
         - id: social-service
           uri: ${MS_SOCIAL_HOST:http://localhost}:${MS_SOCIAL_PORT:8082}${MS_SOCIAL_PATH:/api/ms-social-api/}
           #uri: lb://MS-SOCIAL-API/api/ms-social-api
